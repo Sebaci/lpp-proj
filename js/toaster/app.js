@@ -219,6 +219,10 @@
     function App() {
       this.test_graph = __bind(this.test_graph, this);
 
+      this.process_next_node = __bind(this.process_next_node, this);
+
+      this.process_nodes = __bind(this.process_nodes, this);
+
       this.dijkstra = __bind(this.dijkstra, this);
 
       this.generate_graph = __bind(this.generate_graph, this);
@@ -232,32 +236,54 @@
     };
 
     App.prototype.dijkstra = function() {
-      var current, nbr_index, neighbour, new_distance, _results;
+      var i;
       this.q = new Queue(this.g.nodes);
       this.t = this.q.t;
       this.g.nodes[1].distance = 0;
-      _results = [];
-      while (this.q.size > 0) {
-        current = this.q.delete_min();
-        this.graph_view.update(current, 'visited');
-        _results.push((function() {
-          var _i, _len, _ref, _results1;
+      i = 0;
+      return this.process_nodes();
+    };
+
+    App.prototype.process_nodes = function() {
+      var _this = this;
+      return setTimeout((function() {
+        var current, nbr_index, neighbour, new_distance, _i, _len, _ref;
+        if (_this.q.size > 0) {
+          current = _this.q.delete_min();
+          _this.graph_view.update(current, 'visited');
           _ref = current.adj;
-          _results1 = [];
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             neighbour = _ref[_i];
-            nbr_index = this.t[neighbour.node];
+            nbr_index = _this.t[neighbour.node];
             new_distance = current.distance + neighbour.dist;
-            if (new_distance < this.q.nodes[nbr_index].distance) {
-              this.q.nodes[nbr_index].distance = new_distance;
-              this.q.heapify(nbr_index);
-              _results1.push(this.graph_view.update(this.q.nodes[nbr_index], 'updated'));
-            } else {
-              _results1.push(void 0);
+            if (new_distance < _this.q.nodes[nbr_index].distance) {
+              _this.q.nodes[nbr_index].distance = new_distance;
+              _this.q.heapify(nbr_index);
+              _this.graph_view.update(_this.q.nodes[nbr_index], 'updated');
             }
           }
-          return _results1;
-        }).call(this));
+          return _this.process_nodes();
+        }
+      }), 500);
+    };
+
+    App.prototype.process_next_node = function() {
+      var current, nbr_index, neighbour, new_distance, _i, _len, _ref, _results;
+      current = this.q.delete_min();
+      this.graph_view.update(current, 'visited');
+      _ref = current.adj;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        neighbour = _ref[_i];
+        nbr_index = this.t[neighbour.node];
+        new_distance = current.distance + neighbour.dist;
+        if (new_distance < this.q.nodes[nbr_index].distance) {
+          this.q.nodes[nbr_index].distance = new_distance;
+          this.q.heapify(nbr_index);
+          _results.push(this.graph_view.update(this.q.nodes[nbr_index], 'updated'));
+        } else {
+          _results.push(void 0);
+        }
       }
       return _results;
     };

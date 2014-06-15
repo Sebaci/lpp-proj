@@ -153,21 +153,56 @@ class App
     @t = @q.t
 
     @g.nodes[1].distance = 0
-    while @q.size > 0
-      current = @q.delete_min()
 
-      @graph_view.update current, 'visited'
+    i = 0
+#    while @q.size > 0
+#      setTimeout @process_next_node, 200
+#      @process_next_node()
+#      setTimeout (=> @process_next_node()), 1000
 
-      for neighbour in current.adj
-        nbr_index = @t[neighbour.node]
+#      if i == 20 then break
+#      i++
+    @process_nodes()
 
-        new_distance = current.distance + neighbour.dist
+  process_nodes: =>
+    setTimeout (=>
+      if @q.size > 0
+        current = @q.delete_min()
 
-        if new_distance < @q.nodes[nbr_index].distance
-          @q.nodes[nbr_index].distance = new_distance
-          @q.heapify nbr_index
+        @graph_view.update current, 'visited'
 
-          @graph_view.update @q.nodes[nbr_index], 'updated'
+        for neighbour in current.adj
+          nbr_index = @t[neighbour.node]
+
+          new_distance = current.distance + neighbour.dist
+
+          if new_distance < @q.nodes[nbr_index].distance
+            @q.nodes[nbr_index].distance = new_distance
+            @q.heapify nbr_index
+
+            @graph_view.update @q.nodes[nbr_index], 'updated'
+
+        @process_nodes()
+
+    ), 500
+
+
+  process_next_node: =>
+    current = @q.delete_min()
+
+    @graph_view.update current, 'visited'
+
+    for neighbour in current.adj
+      nbr_index = @t[neighbour.node]
+
+      new_distance = current.distance + neighbour.dist
+
+      if new_distance < @q.nodes[nbr_index].distance
+        @q.nodes[nbr_index].distance = new_distance
+        @q.heapify nbr_index
+
+        @graph_view.update @q.nodes[nbr_index], 'updated'
+
 
 #    console.log '---'
 #    for i in [1..@g.size]
