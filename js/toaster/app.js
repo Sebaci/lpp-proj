@@ -221,6 +221,8 @@
 
       this.process_next_node = __bind(this.process_next_node, this);
 
+      this.process_neighbours = __bind(this.process_neighbours, this);
+
       this.process_nodes = __bind(this.process_nodes, this);
 
       this.dijkstra = __bind(this.dijkstra, this);
@@ -244,25 +246,63 @@
       return this.process_nodes();
     };
 
-    App.prototype.process_nodes = function() {
-      var _this = this;
-      return setTimeout((function() {
-        var current, nbr_index, neighbour, new_distance, _i, _len, _ref;
-        if (_this.q.size > 0) {
+    App.prototype.process_nodes = function(node, i) {
+      var nbr_index, neighbour, new_distance,
+        _this = this;
+      if (node == null) {
+        node = null;
+      }
+      if (i == null) {
+        i = 0;
+      }
+      if (!node && this.q.size > 0) {
+        return setTimeout((function() {
+          var current;
           current = _this.q.delete_min();
           _this.graph_view.update(current, 'visited');
-          _ref = current.adj;
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            neighbour = _ref[_i];
-            nbr_index = _this.t[neighbour.node];
-            new_distance = current.distance + neighbour.dist;
-            if (new_distance < _this.q.nodes[nbr_index].distance) {
-              _this.q.nodes[nbr_index].distance = new_distance;
-              _this.q.heapify(nbr_index);
-              _this.graph_view.update(_this.q.nodes[nbr_index], 'updated');
-            }
+          return _this.process_nodes(current);
+        }), 500);
+      } else if (node) {
+        if (i >= node.adj.length) {
+          this.process_nodes();
+          return;
+        }
+        console.log(node);
+        console.log('adj! ', i);
+        neighbour = node.adj[i];
+        nbr_index = this.t[neighbour.node];
+        new_distance = node.distance + neighbour.dist;
+        if (new_distance >= this.q.nodes[nbr_index].distance) {
+          this.process_nodes(node, i + 1);
+          return console.log('skip!');
+        } else {
+          return setTimeout((function() {
+            _this.q.nodes[nbr_index].distance = new_distance;
+            _this.q.heapify(nbr_index);
+            _this.graph_view.update(_this.q.nodes[nbr_index], 'updated');
+            return _this.process_nodes(node, i + 1);
+          }), 500);
+        }
+      }
+    };
+
+    App.prototype.process_neighbours = function(node, i) {
+      var _this = this;
+      if (i == null) {
+        i = 0;
+      }
+      return setTimeout((function() {
+        var nbr_index, neighbour, new_distance;
+        if (i < node.adj.length - 1) {
+          neighbour = node.adj[i];
+          nbr_index = _this.t[neighbour.node];
+          new_distance = node.distance + neighbour.dist;
+          if (new_distance < _this.q.nodes[nbr_index].distance) {
+            _this.q.nodes[nbr_index].distance = new_distance;
+            _this.q.heapify(nbr_index);
+            _this.graph_view.update(_this.q.nodes[nbr_index], 'updated');
           }
-          return _this.process_nodes();
+          return _this.process_neighbours(node, i + 1);
         }
       }), 500);
     };

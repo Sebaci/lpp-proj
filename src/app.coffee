@@ -154,59 +154,45 @@ class App
 
     @g.nodes[1].distance = 0
 
-    i = 0
-#    while @q.size > 0
-#      setTimeout @process_next_node, 200
-#      @process_next_node()
-#      setTimeout (=> @process_next_node()), 1000
-
-#      if i == 20 then break
-#      i++
     @process_nodes()
 
-  process_nodes: =>
-    setTimeout (=>
-      if @q.size > 0
+  process_nodes: (node = null, i = 0) =>
+
+    # mode to next mode
+    if !node and @q.size > 0
+      setTimeout (=>
+
         current = @q.delete_min()
 
         @graph_view.update current, 'visited'
 
-        for neighbour in current.adj
-          nbr_index = @t[neighbour.node]
+        @process_nodes current
+      ), 500
 
-          new_distance = current.distance + neighbour.dist
-
-          if new_distance < @q.nodes[nbr_index].distance
-            @q.nodes[nbr_index].distance = new_distance
-            @q.heapify nbr_index
-
-            @graph_view.update @q.nodes[nbr_index], 'updated'
-
+    # update neighbours
+    else if node
+      if i >= node.adj.length
         @process_nodes()
+        return
 
-    ), 500
-
-
-  process_next_node: =>
-    current = @q.delete_min()
-
-    @graph_view.update current, 'visited'
-
-    for neighbour in current.adj
+      neighbour = node.adj[i]
       nbr_index = @t[neighbour.node]
 
-      new_distance = current.distance + neighbour.dist
+      new_distance = node.distance + neighbour.dist
 
-      if new_distance < @q.nodes[nbr_index].distance
-        @q.nodes[nbr_index].distance = new_distance
-        @q.heapify nbr_index
+      # skip current neighbour if distance cannot be improved
+      if new_distance >= @q.nodes[nbr_index].distance
+        @process_nodes node, i+1
 
-        @graph_view.update @q.nodes[nbr_index], 'updated'
+      else
+        setTimeout (=>
+          @q.nodes[nbr_index].distance = new_distance
+          @q.heapify nbr_index
 
+          @graph_view.update @q.nodes[nbr_index], 'updated'
 
-#    console.log '---'
-#    for i in [1..@g.size]
-#      console.log i, ': ', @q.nodes[@t[i]].distance
+          @process_nodes node, i+1
+        ), 500
 
 
   test_graph: =>
