@@ -1,98 +1,137 @@
-class Node
-  constructor: (@name, @num = null) ->
-    @adj = []
-    @distance = 1000000 # to change
-    @visited = false
+#<< graph
+#<< queue
+#<< rand
 
-class Graph
-  constructor: ->
-    @nodes = [new Node('fake')] # fake node just to count from 1 instead of 0
-    @size = 0
+class GraphView
+  constructor: (canvas) ->
+    @canvas = document.getElementById(canvas).getContext('2d')
+    @graph_states = []
 
-  add_node: (name) =>
-    @size += 1
-    @nodes.push new Node(name, @size)
+    @colors =
+      green: '#7aee3c'
+      red: '#ff5d40'
+      blue: '#4188D2'
 
-  add_edge: (node_1, node_2, value) =>
-    neighbour_1 =
-      node: node_2
-      dist: value
-
-    neighbour_2 =
-      node: node_1
-      dist: value
-
-    @nodes[node_1].adj.push neighbour_1
-    @nodes[node_2].adj.push neighbour_2
-
-class Queue
-  constructor: (@nodes) ->
+  generate: (graph) =>
+    @nodes = graph.nodes
     @size = @nodes.length - 1
-    @t = [0..@size] # transform table for swapping nodes in array
 
-  delete_min: =>
-    min = @nodes[1]
-    min.visited = true
-    @swap 1, @size # move minimum behind queue
-    @size -= 1
-    @heapify_down 1
-    return min
+    @generate_coords()
+    initial_state =
+      colors: (@colors.red for i in [0..@size])
+      distances: (node.dist for node in @nodes)
+      info: 'Stan początkowy'
 
-  heapify: (index) =>
-    @heapify_down index
-    @heapify_up index
+    @graph_states.push initial_state
+    @current_state = 0
 
-  heapify_down: (index) =>
-    lesser_son = index * 2
+    @draw_graph()
 
-    while lesser_son <= @size
-      if lesser_son < @size and @nodes[lesser_son+ 1].distance < @nodes[lesser_son].distance
-        lesser_son += 1
+  generate_coords: =>
+    x_random = Rand.unique_random quantity: @size, min: 1, max: 15
+    y_random = Rand.unique_random quantity: @size, min: 1, max: 15
 
-      if @nodes[index] > @nodes[lesser_son]
-        @swap index, lesser_son
-        index = lesser_son
-        lesser_son *= 2
-      else break
+    spacing = 30
+    x_pos = (pos * spacing for pos in x_random)
+    y_pos = (pos * spacing for pos in y_random)
 
-  heapify_up: (index) =>
-    parent = Math.floor index / 2
-    while parent >= 1 and @nodes[parent].distance > @nodes[index].distance
-      @swap index, parent
-      index = parent
+    @coords = [{x: null, y: null}] # fake position for fake node
 
-  swap: (i, j) =>
-    @index_transform i, j
-    tmp = @nodes[j]
-    @nodes[j] = @nodes[i]
-    @nodes[i] = tmp
+    for i in [0..@size-1]
+      coord =
+        x: x_pos[i]
+        y: y_pos[i]
+      @coords.push coord
 
-  index_transform: (i, j) =>
-    @t[@nodes[i].num] = j
-    @t[@nodes[j].num] = i
+  draw_graph: =>
+    @draw_edges()
+
+    @draw_all_nodes()
+
+  draw_edges: =>
+    edge_values = []
+
+    for node in @nodes[1..]
+      coords_begin = @coords[node.num]
+      for neighbour in node.adj
+        if neighbour.node < node.num then continue # don't draw edge to previous nodes
+        coords_end = @coords[neighbour.node]
+
+        @canvas.beginPath()
+        @canvas.lineWidth = 2
+        @canvas.fillStyle = 'black'
+        @canvas.moveTo coords_begin.x, coords_begin.y
+        @canvas.lineTo coords_end.x, coords_end.y
+        @canvas.stroke()
+
+        console.log 'begin: ', coords_begin
+        console.log 'end: ', coords_end
+
+        edge_value =
+          edge: neighbour.dist
+          x: Math.floor(Math.abs((coords_end.x + coords_begin.x) / 2))
+          y: Math.floor(Math.abs((coords_end.y + coords_begin.y) / 2))
+
+        edge_values.push edge_value
+
+    # draw edge values after lines
+    for e in edge_values
+
+        @canvas.beginPath()
+        @canvas.lineWidth = 1
+        @canvas.rect e.x - 9, e.y - 6, 18, 12
+        @canvas.fillStyle = @colors.blue
+        @canvas.fill()
+        @canvas.stroke()
+
+        @canvas.fillStyle = 'black'
+        @canvas.font = 'bold 12px Georgia'
+        @canvas.fillText e.edge, e.x-4, e.y+3
+
+  draw_all_nodes: =>
+    @draw_node(node) for node in @nodes[1..]
+
+  draw_node: (node) =>
+    coord = @coords[node.num]
+    node_color = @graph_states[@current_state].colors[node.num]
+
+    @canvas.beginPath()
+    @canvas.arc coord.x, coord.y, 12, 2 * Math.PI, false
+    @canvas.fillStyle = node_color
+    @canvas.fill()
+
+    @canvas.lineWidth = 2
+    @canvas.strokeStyle = 'black'
+    @canvas.stroke()
+
+    @canvas.fillStyle = 'black'
+    @canvas.font = 'bold 15px Georgia'
+    @canvas.fillText node.name, coord.x-5, coord.y+5
+
+
+
 
 class App
   constructor: ->
-    @set_graph_canvas()
-
-  set_graph_canvas: ->
-    canvas = document.getElementById('graphCanvas')
-    @graphCanvas = canvas.getContext('2d')
-    margin = 15
-    [@minX, @minY] = [margin, margin]
-    [@maxX, @maxY] = [canvas.width - margin, canvas.height - margin]
+    @graphView = new GraphView 'graphCanvas'
 
   generate_graph: ->
     @g = new Graph()
+    # should get n from input 5 <= n <= 15
+
+    # should generate some nodes here
+    @test_graph()
+
+    @graphView.generate @g
+
+
 
 
 
   dijkstra: ->
     @q = new Queue(@g.nodes)
-
     @t = @q.t
 
-    # Dijkstra
     @g.nodes[1].distance = 0
     while @q.size > 0
       current = @q.delete_min()
@@ -112,7 +151,6 @@ class App
 
 
   test_graph: =>
-    @g = new Graph()
     @g.add_node 'A'
     @g.add_node 'B'
     @g.add_node 'C'
@@ -135,6 +173,8 @@ class App
 $ ->
   app = new App()
 
-  app.test_graph()
-  app.dijkstra()
+  app.generate_graph()
+
+#  app.test_graph()
+#  app.dijkstra()
 
