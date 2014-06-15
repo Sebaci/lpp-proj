@@ -111,15 +111,28 @@ class GraphView
 
     @canvas.beginPath()
     @canvas.lineWidth = 1
-    @canvas.rect coord.x - 15, coord.y + 14, 30, 13
+    @canvas.rect coord.x - 16, coord.y + 14, 32, 13
     @canvas.fillStyle = @colors.orange
     @canvas.fill()
     @canvas.stroke()
 
     @canvas.fillStyle = 'black'
     @canvas.font = 'bold 12px Georgia'
-    @canvas.fillText "d: #{node_dist}", coord.x - 13, coord.y + 24
+    @canvas.fillText "d: #{node_dist}", coord.x - 14, coord.y + 24
 
+  update: (node, mode) =>
+    new_state = _.clone @graph_states[@current_state]
+
+    new_state.distances[node.num] = node.distance
+    if mode == 'visited'
+      new_state.colors[node.num] = @colors.green
+    else if mode == 'updated'
+      new_state.colors[node.num] = @colors.orange
+
+    @graph_states.push new_state
+    @current_state++
+
+    @draw_node node
 
 class App
   constructor: ->
@@ -143,6 +156,8 @@ class App
     while @q.size > 0
       current = @q.delete_min()
 
+      @graph_view.update current, 'visited'
+
       for neighbour in current.adj
         nbr_index = @t[neighbour.node]
 
@@ -151,6 +166,8 @@ class App
         if new_distance < @q.nodes[nbr_index].distance
           @q.nodes[nbr_index].distance = new_distance
           @q.heapify nbr_index
+
+          @graph_view.update @q.nodes[nbr_index], 'updated'
 
 #    console.log '---'
 #    for i in [1..@g.size]
@@ -181,6 +198,7 @@ $ ->
   app = new App()
 
   app.generate_graph()
+  app.dijkstra()
 
 #  foo = (opts) =>
 #    {one, two, three} = opts

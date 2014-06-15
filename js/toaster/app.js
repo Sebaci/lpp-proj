@@ -5,6 +5,8 @@
   GraphView = (function() {
 
     function GraphView(canvas) {
+      this.update = __bind(this.update, this);
+
       this.draw_node = __bind(this.draw_node, this);
 
       this.draw_all_nodes = __bind(this.draw_all_nodes, this);
@@ -185,13 +187,27 @@
       }
       this.canvas.beginPath();
       this.canvas.lineWidth = 1;
-      this.canvas.rect(coord.x - 15, coord.y + 14, 30, 13);
+      this.canvas.rect(coord.x - 16, coord.y + 14, 32, 13);
       this.canvas.fillStyle = this.colors.orange;
       this.canvas.fill();
       this.canvas.stroke();
       this.canvas.fillStyle = 'black';
       this.canvas.font = 'bold 12px Georgia';
-      return this.canvas.fillText("d: " + node_dist, coord.x - 13, coord.y + 24);
+      return this.canvas.fillText("d: " + node_dist, coord.x - 14, coord.y + 24);
+    };
+
+    GraphView.prototype.update = function(node, mode) {
+      var new_state;
+      new_state = _.clone(this.graph_states[this.current_state]);
+      new_state.distances[node.num] = node.distance;
+      if (mode === 'visited') {
+        new_state.colors[node.num] = this.colors.green;
+      } else if (mode === 'updated') {
+        new_state.colors[node.num] = this.colors.orange;
+      }
+      this.graph_states.push(new_state);
+      this.current_state++;
+      return this.draw_node(node);
     };
 
     return GraphView;
@@ -223,6 +239,7 @@
       _results = [];
       while (this.q.size > 0) {
         current = this.q.delete_min();
+        this.graph_view.update(current, 'visited');
         _results.push((function() {
           var _i, _len, _ref, _results1;
           _ref = current.adj;
@@ -233,7 +250,8 @@
             new_distance = current.distance + neighbour.dist;
             if (new_distance < this.q.nodes[nbr_index].distance) {
               this.q.nodes[nbr_index].distance = new_distance;
-              _results1.push(this.q.heapify(nbr_index));
+              this.q.heapify(nbr_index);
+              _results1.push(this.graph_view.update(this.q.nodes[nbr_index], 'updated'));
             } else {
               _results1.push(void 0);
             }
@@ -270,7 +288,8 @@
   $(function() {
     var app;
     app = new App();
-    return app.generate_graph();
+    app.generate_graph();
+    return app.dijkstra();
   });
 
 }).call(this);
