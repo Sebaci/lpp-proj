@@ -8,7 +8,7 @@
       this.name = name;
       this.num = num != null ? num : null;
       this.adj = [];
-      this.distance = 1000000;
+      this.distance = 2147483647;
       this.visited = false;
     }
 

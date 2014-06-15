@@ -1,9 +1,9 @@
 class Rand
-  @random: (opts) ->
+  @random: (opts) =>
     {min, max} = opts
     Math.floor(Math.random() * (max - min + 1) + min)
 
-  @unique_random: (opts) ->
+  @unique_random: (opts) =>
     {quantity, min, max} = opts
     if numbers > (max - min + 1) then return []
 

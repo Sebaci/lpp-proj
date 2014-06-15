@@ -1,7 +1,7 @@
 class GNode
   constructor: (@name, @num = null) ->
     @adj = []
-    @distance = 1000000 # to change
+    @distance = 2147483647 # 2^31-1
     @visited = false
 
 class Graph

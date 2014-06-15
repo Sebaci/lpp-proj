@@ -11,6 +11,7 @@ class GraphView
       green: '#7aee3c'
       red: '#ff5d40'
       blue: '#4188D2'
+      orange: '#ffc040'
 
   generate: (graph) =>
     @nodes = graph.nodes
@@ -19,7 +20,7 @@ class GraphView
     @generate_coords()
     initial_state =
       colors: (@colors.red for i in [0..@size])
-      distances: (node.dist for node in @nodes)
+      distances: (node.distance for node in @nodes)
       info: 'Stan początkowy'
 
     @graph_states.push initial_state
@@ -64,9 +65,6 @@ class GraphView
         @canvas.lineTo coords_end.x, coords_end.y
         @canvas.stroke()
 
-        console.log 'begin: ', coords_begin
-        console.log 'end: ', coords_end
-
         edge_value =
           edge: neighbour.dist
           x: Math.floor(Math.abs((coords_end.x + coords_begin.x) / 2))
@@ -76,17 +74,16 @@ class GraphView
 
     # draw edge values after lines
     for e in edge_values
+      @canvas.beginPath()
+      @canvas.lineWidth = 1
+      @canvas.rect e.x - 9, e.y - 6, 18, 12
+      @canvas.fillStyle = @colors.blue
+      @canvas.fill()
+      @canvas.stroke()
 
-        @canvas.beginPath()
-        @canvas.lineWidth = 1
-        @canvas.rect e.x - 9, e.y - 6, 18, 12
-        @canvas.fillStyle = @colors.blue
-        @canvas.fill()
-        @canvas.stroke()
-
-        @canvas.fillStyle = 'black'
-        @canvas.font = 'bold 12px Georgia'
-        @canvas.fillText e.edge, e.x-4, e.y+3
+      @canvas.fillStyle = 'black'
+      @canvas.font = 'bold 12px Georgia'
+      @canvas.fillText e.edge, e.x-4, e.y+3
 
   draw_all_nodes: =>
     @draw_node(node) for node in @nodes[1..]
@@ -108,27 +105,37 @@ class GraphView
     @canvas.font = 'bold 15px Georgia'
     @canvas.fillText node.name, coord.x-5, coord.y+5
 
+    # distance
+    node_dist = @graph_states[@current_state].distances[node.num]
+    node_dist = '--' if node_dist == 2147483647
 
+    @canvas.beginPath()
+    @canvas.lineWidth = 1
+    @canvas.rect coord.x - 15, coord.y + 14, 30, 13
+    @canvas.fillStyle = @colors.orange
+    @canvas.fill()
+    @canvas.stroke()
+
+    @canvas.fillStyle = 'black'
+    @canvas.font = 'bold 12px Georgia'
+    @canvas.fillText "d: #{node_dist}", coord.x - 13, coord.y + 24
 
 
 class App
   constructor: ->
-    @graphView = new GraphView 'graphCanvas'
+    @graph_view = new GraphView 'graphCanvas'
 
-  generate_graph: ->
+  generate_graph: =>
     @g = new Graph()
     # should get n from input 5 <= n <= 15
 
     # should generate some nodes here
     @test_graph()
 
-    @graphView.generate @g
+    @graph_view.generate @g
 
 
-
-
-
-  dijkstra: ->
+  dijkstra: =>
     @q = new Queue(@g.nodes)
     @t = @q.t
 
@@ -145,9 +152,9 @@ class App
           @q.nodes[nbr_index].distance = new_distance
           @q.heapify nbr_index
 
-    console.log '---'
-    for i in [1..@g.size]
-      console.log i, ': ', @q.nodes[@t[i]].distance
+#    console.log '---'
+#    for i in [1..@g.size]
+#      console.log i, ': ', @q.nodes[@t[i]].distance
 
 
   test_graph: =>
@@ -175,6 +182,7 @@ $ ->
 
   app.generate_graph()
 
-#  app.test_graph()
-#  app.dijkstra()
-
+#  foo = (opts) =>
+#    {one, two, three} = opts
+#    if one
+#      console.log 'one!'

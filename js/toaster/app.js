@@ -21,7 +21,8 @@
       this.colors = {
         green: '#7aee3c',
         red: '#ff5d40',
-        blue: '#4188D2'
+        blue: '#4188D2',
+        orange: '#ffc040'
       };
     }
 
@@ -45,7 +46,7 @@
           _results = [];
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             node = _ref[_i];
-            _results.push(node.dist);
+            _results.push(node.distance);
           }
           return _results;
         }).call(this),
@@ -129,8 +130,6 @@
           this.canvas.moveTo(coords_begin.x, coords_begin.y);
           this.canvas.lineTo(coords_end.x, coords_end.y);
           this.canvas.stroke();
-          console.log('begin: ', coords_begin);
-          console.log('end: ', coords_end);
           edge_value = {
             edge: neighbour.dist,
             x: Math.floor(Math.abs((coords_end.x + coords_begin.x) / 2)),
@@ -167,7 +166,7 @@
     };
 
     GraphView.prototype.draw_node = function(node) {
-      var coord, node_color;
+      var coord, node_color, node_dist;
       coord = this.coords[node.num];
       node_color = this.graph_states[this.current_state].colors[node.num];
       this.canvas.beginPath();
@@ -179,7 +178,20 @@
       this.canvas.stroke();
       this.canvas.fillStyle = 'black';
       this.canvas.font = 'bold 15px Georgia';
-      return this.canvas.fillText(node.name, coord.x - 5, coord.y + 5);
+      this.canvas.fillText(node.name, coord.x - 5, coord.y + 5);
+      node_dist = this.graph_states[this.current_state].distances[node.num];
+      if (node_dist === 2147483647) {
+        node_dist = '--';
+      }
+      this.canvas.beginPath();
+      this.canvas.lineWidth = 1;
+      this.canvas.rect(coord.x - 15, coord.y + 14, 30, 13);
+      this.canvas.fillStyle = this.colors.orange;
+      this.canvas.fill();
+      this.canvas.stroke();
+      this.canvas.fillStyle = 'black';
+      this.canvas.font = 'bold 12px Georgia';
+      return this.canvas.fillText("d: " + node_dist, coord.x - 13, coord.y + 24);
     };
 
     return GraphView;
@@ -190,37 +202,44 @@
 
     function App() {
       this.test_graph = __bind(this.test_graph, this);
-      this.graphView = new GraphView('graphCanvas');
+
+      this.dijkstra = __bind(this.dijkstra, this);
+
+      this.generate_graph = __bind(this.generate_graph, this);
+      this.graph_view = new GraphView('graphCanvas');
     }
 
     App.prototype.generate_graph = function() {
       this.g = new Graph();
       this.test_graph();
-      return this.graphView.generate(this.g);
+      return this.graph_view.generate(this.g);
     };
 
     App.prototype.dijkstra = function() {
-      var current, i, nbr_index, neighbour, new_distance, _i, _j, _len, _ref, _ref1, _results;
+      var current, nbr_index, neighbour, new_distance, _results;
       this.q = new Queue(this.g.nodes);
       this.t = this.q.t;
       this.g.nodes[1].distance = 0;
+      _results = [];
       while (this.q.size > 0) {
         current = this.q.delete_min();
-        _ref = current.adj;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          neighbour = _ref[_i];
-          nbr_index = this.t[neighbour.node];
-          new_distance = current.distance + neighbour.dist;
-          if (new_distance < this.q.nodes[nbr_index].distance) {
-            this.q.nodes[nbr_index].distance = new_distance;
-            this.q.heapify(nbr_index);
+        _results.push((function() {
+          var _i, _len, _ref, _results1;
+          _ref = current.adj;
+          _results1 = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            neighbour = _ref[_i];
+            nbr_index = this.t[neighbour.node];
+            new_distance = current.distance + neighbour.dist;
+            if (new_distance < this.q.nodes[nbr_index].distance) {
+              this.q.nodes[nbr_index].distance = new_distance;
+              _results1.push(this.q.heapify(nbr_index));
+            } else {
+              _results1.push(void 0);
+            }
           }
-        }
-      }
-      console.log('---');
-      _results = [];
-      for (i = _j = 1, _ref1 = this.g.size; 1 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 1 <= _ref1 ? ++_j : --_j) {
-        _results.push(console.log(i, ': ', this.q.nodes[this.t[i]].distance));
+          return _results1;
+        }).call(this));
       }
       return _results;
     };

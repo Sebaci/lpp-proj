@@ -24,7 +24,7 @@
         return _results;
       }).apply(this);
       while (quantity > 0) {
-        selected = this.random({
+        selected = Rand.random({
           min: 0,
           max: numbers.length - 1
         });
@@ -39,7 +39,7 @@
 
     return Rand;
 
-  })();
+  }).call(this);
 
   window.Rand = Rand;
 
