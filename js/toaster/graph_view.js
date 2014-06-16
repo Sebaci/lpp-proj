@@ -41,12 +41,12 @@
       x_random = Rand.unique_random({
         quantity: this.size,
         min: 1,
-        max: 15
+        max: 18
       });
       y_random = Rand.unique_random({
         quantity: this.size,
         min: 1,
-        max: 15
+        max: 20
       });
       spacing = 30;
       x_pos = (function() {

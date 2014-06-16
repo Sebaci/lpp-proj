@@ -14,10 +14,12 @@
     float: left;
     margin-left: 10px;
     margin-right: 10px;
+    padding: 0px;
 }
 #statesList{
     list-style-type: none;
     padding: 0px;
+    margin: 0px;
 
 }
 #statesList li{

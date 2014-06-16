@@ -16,8 +16,8 @@ class GraphView
     @generate_coords()
 
   generate_coords: =>
-    x_random = Rand.unique_random quantity: @size, min: 1, max: 15
-    y_random = Rand.unique_random quantity: @size, min: 1, max: 15
+    x_random = Rand.unique_random quantity: @size, min: 1, max: 18
+    y_random = Rand.unique_random quantity: @size, min: 1, max: 20
 
     spacing = 30
     x_pos = (pos * spacing for pos in x_random)
