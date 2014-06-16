@@ -92,7 +92,7 @@ class App
         @states_list.update()
 
         @process_nodes current
-      ), 300
+      ), 450
 
     # update neighbours
     else if node
@@ -120,7 +120,7 @@ class App
           @states_list.update()
 
           @process_nodes node, i+1
-        ), 300
+        ), 450
 
   reset: =>
     @graph_canvas = @graph_view.canvas.clearRect(0, 0, 570, 630)
