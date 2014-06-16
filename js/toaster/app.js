@@ -219,9 +219,7 @@
     function App() {
       this.test_graph = __bind(this.test_graph, this);
 
-      this.process_next_node = __bind(this.process_next_node, this);
-
-      this.process_neighbours = __bind(this.process_neighbours, this);
+      this.dj = __bind(this.dj, this);
 
       this.process_nodes = __bind(this.process_nodes, this);
 
@@ -238,11 +236,9 @@
     };
 
     App.prototype.dijkstra = function() {
-      var i;
       this.q = new Queue(this.g.nodes);
       this.t = this.q.t;
       this.g.nodes[1].distance = 0;
-      i = 0;
       return this.process_nodes();
     };
 
@@ -267,14 +263,11 @@
           this.process_nodes();
           return;
         }
-        console.log(node);
-        console.log('adj! ', i);
         neighbour = node.adj[i];
         nbr_index = this.t[neighbour.node];
         new_distance = node.distance + neighbour.dist;
         if (new_distance >= this.q.nodes[nbr_index].distance) {
-          this.process_nodes(node, i + 1);
-          return console.log('skip!');
+          return this.process_nodes(node, i + 1);
         } else {
           return setTimeout((function() {
             _this.q.nodes[nbr_index].distance = new_distance;
@@ -286,44 +279,44 @@
       }
     };
 
-    App.prototype.process_neighbours = function(node, i) {
-      var _this = this;
-      if (i == null) {
-        i = 0;
-      }
-      return setTimeout((function() {
-        var nbr_index, neighbour, new_distance;
-        if (i < node.adj.length - 1) {
-          neighbour = node.adj[i];
-          nbr_index = _this.t[neighbour.node];
-          new_distance = node.distance + neighbour.dist;
-          if (new_distance < _this.q.nodes[nbr_index].distance) {
-            _this.q.nodes[nbr_index].distance = new_distance;
-            _this.q.heapify(nbr_index);
-            _this.graph_view.update(_this.q.nodes[nbr_index], 'updated');
-          }
-          return _this.process_neighbours(node, i + 1);
-        }
-      }), 500);
-    };
-
-    App.prototype.process_next_node = function() {
-      var current, nbr_index, neighbour, new_distance, _i, _len, _ref, _results;
-      current = this.q.delete_min();
-      this.graph_view.update(current, 'visited');
-      _ref = current.adj;
+    App.prototype.dj = function() {
+      var current, nbr_index, neighbour, new_distance, node, _results;
+      this.q = new Queue(this.g.nodes);
+      this.t = this.q.t;
+      this.g.nodes[1].distance = 0;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        neighbour = _ref[_i];
-        nbr_index = this.t[neighbour.node];
-        new_distance = current.distance + neighbour.dist;
-        if (new_distance < this.q.nodes[nbr_index].distance) {
-          this.q.nodes[nbr_index].distance = new_distance;
-          this.q.heapify(nbr_index);
-          _results.push(this.graph_view.update(this.q.nodes[nbr_index], 'updated'));
-        } else {
-          _results.push(void 0);
-        }
+      while (this.q.size > 0) {
+        current = this.q.delete_min();
+        console.log("" + current.name + " - " + current.distance);
+        console.log((function() {
+          var _i, _len, _ref, _results1;
+          _ref = this.q.nodes;
+          _results1 = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            node = _ref[_i];
+            _results1.push(node.distance);
+          }
+          return _results1;
+        }).call(this));
+        this.graph_view.update(current, 'visited');
+        _results.push((function() {
+          var _i, _len, _ref, _results1;
+          _ref = current.adj;
+          _results1 = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            neighbour = _ref[_i];
+            nbr_index = this.t[neighbour.node];
+            new_distance = current.distance + neighbour.dist;
+            if (new_distance < this.q.nodes[nbr_index].distance) {
+              this.q.nodes[nbr_index].distance = new_distance;
+              this.q.heapify(nbr_index);
+              _results1.push(this.graph_view.update(this.q.nodes[nbr_index], 'updated'));
+            } else {
+              _results1.push(void 0);
+            }
+          }
+          return _results1;
+        }).call(this));
       }
       return _results;
     };

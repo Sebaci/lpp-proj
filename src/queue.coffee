@@ -19,10 +19,10 @@ class Queue
     lesser_son = index * 2
 
     while lesser_son <= @size
-      if lesser_son < @size and @nodes[lesser_son+ 1].distance < @nodes[lesser_son].distance
+      if lesser_son < @size and @nodes[lesser_son + 1].distance < @nodes[lesser_son].distance
         lesser_son++
 
-      if @nodes[index] > @nodes[lesser_son]
+      if @nodes[index].distance > @nodes[lesser_son].distance
         @swap index, lesser_son
         index = lesser_son
         lesser_son *= 2
@@ -33,6 +33,7 @@ class Queue
     while parent >= 1 and @nodes[parent].distance > @nodes[index].distance
       @swap index, parent
       index = parent
+      parent = Math.floor index / 2
 
   swap: (i, j) =>
     @index_transform i, j

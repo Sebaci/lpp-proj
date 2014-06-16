@@ -195,6 +195,35 @@ class App
         ), 500
 
 
+
+  dj: =>
+    @q = new Queue(@g.nodes)
+    @t = @q.t
+
+    @g.nodes[1].distance = 0
+    while @q.size > 0
+      current = @q.delete_min()
+
+      console.log "#{current.name} - #{current.distance}"
+      console.log (node.distance for node in @q.nodes)
+
+      @graph_view.update current, 'visited'
+
+      for neighbour in current.adj
+        nbr_index = @t[neighbour.node]
+
+        new_distance = current.distance + neighbour.dist
+
+        if new_distance < @q.nodes[nbr_index].distance
+          @q.nodes[nbr_index].distance = new_distance
+          @q.heapify nbr_index
+
+          @graph_view.update @q.nodes[nbr_index], 'updated'
+
+#    console.log '---'
+#    for i in [1..@g.size]
+#      console.log i, ': ', @q.nodes[@t[i]].distance
+
   test_graph: =>
     @g.add_node 'A'
     @g.add_node 'B'
@@ -220,7 +249,7 @@ $ ->
 
   app.generate_graph()
   app.dijkstra()
-
+#  app.dj()
 #  foo = (opts) =>
 #    {one, two, three} = opts
 #    if one

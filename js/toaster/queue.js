@@ -50,7 +50,7 @@
         if (lesser_son < this.size && this.nodes[lesser_son + 1].distance < this.nodes[lesser_son].distance) {
           lesser_son++;
         }
-        if (this.nodes[index] > this.nodes[lesser_son]) {
+        if (this.nodes[index].distance > this.nodes[lesser_son].distance) {
           this.swap(index, lesser_son);
           index = lesser_son;
           _results.push(lesser_son *= 2);
@@ -67,7 +67,8 @@
       _results = [];
       while (parent >= 1 && this.nodes[parent].distance > this.nodes[index].distance) {
         this.swap(index, parent);
-        _results.push(index = parent);
+        index = parent;
+        _results.push(parent = Math.floor(index / 2));
       }
       return _results;
     };
