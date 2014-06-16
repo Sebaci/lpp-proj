@@ -13,8 +13,6 @@
 
       this.heapify_up = __bind(this.heapify_up, this);
 
-      this.heapify_down = __bind(this.heapify_down, this);
-
       this.heapify = __bind(this.heapify, this);
 
       this.delete_min = __bind(this.delete_min, this);
@@ -33,16 +31,11 @@
       min.visited = true;
       this.swap(1, this.size);
       this.size--;
-      this.heapify_down(1);
+      this.heapify(1);
       return min;
     };
 
     Queue.prototype.heapify = function(index) {
-      this.heapify_down(index);
-      return this.heapify_up(index);
-    };
-
-    Queue.prototype.heapify_down = function(index) {
       var lesser_son, _results;
       lesser_son = index * 2;
       _results = [];

@@ -160,7 +160,7 @@
       this.canvas.fillText(node.name, coord.x - 5, coord.y + 5);
       node_dist = this.graph_states[this.current_state].distances[node.num];
       if (node_dist === 2147483647) {
-        node_dist = '--';
+        node_dist = '∞';
       }
       this.canvas.beginPath();
       this.canvas.lineWidth = 1;
@@ -225,8 +225,6 @@
 
     GraphView.prototype.restore_state = function(state) {
       this.current_state = state;
-      console.log('current ', state);
-      console.log(this.graph_states[0].colors);
       return this.draw_all_nodes();
     };
 

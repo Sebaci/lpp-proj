@@ -8,14 +8,10 @@ class Queue
     min.visited = true
     @swap 1, @size # move minimum behind queue
     @size--
-    @heapify_down 1
+    @heapify 1
     return min
 
   heapify: (index) =>
-    @heapify_down index
-    @heapify_up index
-
-  heapify_down: (index) =>
     lesser_son = index * 2
 
     while lesser_son <= @size

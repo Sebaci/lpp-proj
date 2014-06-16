@@ -3,9 +3,10 @@
 
   StatesList = (function() {
 
-    function StatesList(list_id, graph_view) {
+    function StatesList(list_id, graph_view, queue_view) {
       this.list_id = list_id;
       this.graph_view = graph_view;
+      this.queue_view = queue_view;
       this.list = $("#" + this.list_id);
       console.log(this.list);
       this.last_selected = null;
@@ -26,6 +27,7 @@
         console.log(state_number);
         console.log(_this.last_selected);
         _this.graph_view.restore_state(state_number);
+        _this.queue_view.restore_state(state_number);
         if (_this.last_selected) {
           $("#" + _this.list_id + " li:nth-child(" + (_this.last_selected + 1) + ")").css('background-color', _this.last_color);
         }

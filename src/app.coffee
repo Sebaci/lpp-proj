@@ -2,42 +2,15 @@
 #<< queue
 #<< rand
 #<< graph_view
+#<< queue_view
 #<< states_list
-
-class QueueView
-  constructor: (canvas) ->
-    @canvas = document.getElementById(canvas).getContext('2d')
-    @queue_states = []
-
-    @colors =
-      red: '#ff5d40'
-      blue: '#4188D2'
-
-  generate: (graph) =>
-    @nodes = graph.nodes
-    @size = @nodes.length - 1
-
-    @generate_coords()
-
-  generate_coords: ->
-    @coords = [0..15]
-    @gen_coord 1, Math.ceil(@coords.length / 2), 1
-
-  gen_coord: (n, position, level) ->
-    return if n >= @coords.length
-    @coords[n] =
-      x: position * 80
-      y: level * 80
-
-    @gen_coord n * 2, position - Math.floor(@coords.length / Math.pow(2, level + 1)), level + 1
-    @gen_coord n * 2 + 1, position + Math.floor(@coords.length / Math.pow(2, level + 1)), level + 1
 
 class App
   constructor: ->
     @graph_view = new GraphView 'graphCanvas'
     @queue_view = new QueueView 'queueCanvas'
 
-    @states_list = new StatesList 'statesList', @graph_view
+    @states_list = new StatesList 'statesList', @graph_view, @queue_view
 
   generate_graph: =>
     @g = new Graph()
@@ -50,13 +23,13 @@ class App
     @graph_view.generate @g
     @queue_view.generate @g
 
-
   dijkstra: =>
     @q = new Queue(@g.nodes)
     @t = @q.t
 
     @g.nodes[1].distance = 0
-    @graph_view.update @g.nodes, 'initial'
+    @graph_view.update @g.nodes[1], 'initial'
+    @queue_view.update 'initial'
     @states_list.update()
 
     @process_nodes()
@@ -69,6 +42,7 @@ class App
         current = @q.delete_min()
 
         @graph_view.update current, 'visited'
+        @queue_view.update 'deleted'
         @states_list.update()
 
 
@@ -94,9 +68,10 @@ class App
       else
         setTimeout (=>
           current.distance = new_distance
-          @q.heapify nbr_index
+          @q.heapify_up nbr_index
 
           @graph_view.update current, 'updated'
+          @queue_view.update()
           @states_list.update()
 
           @process_nodes node, i+1

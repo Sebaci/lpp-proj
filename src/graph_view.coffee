@@ -94,7 +94,7 @@ class GraphView
 
     # distance
     node_dist = @graph_states[@current_state].distances[node.num]
-    node_dist = '--' if node_dist == 2147483647
+    node_dist = '∞' if node_dist == 2147483647
 
     @canvas.beginPath()
     @canvas.lineWidth = 1
@@ -144,10 +144,6 @@ class GraphView
 
   restore_state: (state) =>
     @current_state = state
-
-    console.log 'current ', state
-    console.log @graph_states[0].colors
-
     @draw_all_nodes()
 
 window.GraphView = GraphView
