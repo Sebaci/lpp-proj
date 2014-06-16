@@ -2,13 +2,17 @@
 #<< queue
 #<< rand
 #<< graph_view
+#<< states_list
 
 class App
   constructor: ->
     @graph_view = new GraphView 'graphCanvas'
 
+    @states_list = new StatesList 'statesList', @graph_view
+
   generate_graph: =>
     @g = new Graph()
+
     # should get n from input 5 <= n <= 15
 
     # should generate some nodes here
@@ -22,6 +26,7 @@ class App
     @t = @q.t
 
     @g.nodes[1].distance = 0
+    @states_list.update()
 
     @process_nodes()
 
@@ -33,6 +38,8 @@ class App
         current = @q.delete_min()
 
         @graph_view.update current, 'visited'
+        @states_list.update()
+
 
         @process_nodes current
       ), 700
@@ -57,7 +64,10 @@ class App
         setTimeout (=>
           current.distance = new_distance
           @q.heapify nbr_index
+
           @graph_view.update current, 'updated'
+          @states_list.update()
+
           @process_nodes node, i+1
         ), 700
 

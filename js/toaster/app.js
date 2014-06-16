@@ -13,6 +13,7 @@
 
       this.generate_graph = __bind(this.generate_graph, this);
       this.graph_view = new GraphView('graphCanvas');
+      this.states_list = new StatesList('statesList', this.graph_view);
     }
 
     App.prototype.generate_graph = function() {
@@ -25,6 +26,7 @@
       this.q = new Queue(this.g.nodes);
       this.t = this.q.t;
       this.g.nodes[1].distance = 0;
+      this.states_list.update();
       return this.process_nodes();
     };
 
@@ -42,6 +44,7 @@
           var current;
           current = _this.q.delete_min();
           _this.graph_view.update(current, 'visited');
+          _this.states_list.update();
           return _this.process_nodes(current);
         }), 700);
       } else if (node) {
@@ -60,6 +63,7 @@
             current.distance = new_distance;
             _this.q.heapify(nbr_index);
             _this.graph_view.update(current, 'updated');
+            _this.states_list.update();
             return _this.process_nodes(node, i + 1);
           }), 700);
         }

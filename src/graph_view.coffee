@@ -18,6 +18,7 @@ class GraphView
       colors: (@colors.red for i in [0..@size])
       distances: (node.distance for node in @nodes)
       info: 'Stan początkowy'
+      type: 'initial'
 
     @graph_states.push initial_state
     @current_state = 0
@@ -117,15 +118,21 @@ class GraphView
     @canvas.fillText "d: #{node_dist}", coord.x - 14, coord.y + 24
 
   update: (node, mode) =>
-    new_state = _.clone @graph_states[@current_state]
+    current = @graph_states[@current_state]
+    new_state =
+      colors: _.clone current.colors
+      distances: _.clone current.distances
 
     new_state.distances[node.num] = node.distance
     if mode == 'visited'
       new_state.colors[node.num] = @colors.green
       new_state.info = "Odwiedzono #{node.name}"
+      new_state.type = 'visit'
+
     else if mode == 'updated'
       new_state.colors[node.num] = @colors.orange
       new_state.info = "Zaktualizowano #{node.name}"
+      new_state.type = 'update'
 
     @graph_states.push new_state
     @current_state++
@@ -134,6 +141,9 @@ class GraphView
 
   restore_state: (state) =>
     @current_state = state
+
+    console.log 'current ', state
+    console.log @graph_states[0].colors
 
     @draw_all_nodes()
 

@@ -54,7 +54,8 @@
           }
           return _results;
         }).call(this),
-        info: 'Stan początkowy'
+        info: 'Stan początkowy',
+        type: 'initial'
       };
       this.graph_states.push(initial_state);
       this.current_state = 0;
@@ -199,15 +200,21 @@
     };
 
     GraphView.prototype.update = function(node, mode) {
-      var new_state;
-      new_state = _.clone(this.graph_states[this.current_state]);
+      var current, new_state;
+      current = this.graph_states[this.current_state];
+      new_state = {
+        colors: _.clone(current.colors),
+        distances: _.clone(current.distances)
+      };
       new_state.distances[node.num] = node.distance;
       if (mode === 'visited') {
         new_state.colors[node.num] = this.colors.green;
         new_state.info = "Odwiedzono " + node.name;
+        new_state.type = 'visit';
       } else if (mode === 'updated') {
         new_state.colors[node.num] = this.colors.orange;
         new_state.info = "Zaktualizowano " + node.name;
+        new_state.type = 'update';
       }
       this.graph_states.push(new_state);
       this.current_state++;
@@ -216,6 +223,8 @@
 
     GraphView.prototype.restore_state = function(state) {
       this.current_state = state;
+      console.log('current ', state);
+      console.log(this.graph_states[0].colors);
       return this.draw_all_nodes();
     };
 
