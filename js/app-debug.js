@@ -13,4 +13,5 @@ if(k&&j[k]&&(e||j[k].data)||void 0!==d||"string"!=typeof b)return k||(k=i?a[h]=c
 document.write('<scri'+'pt src="js/toaster/graph.js"></scr'+'ipt>')
 document.write('<scri'+'pt src="js/toaster/queue.js"></scr'+'ipt>')
 document.write('<scri'+'pt src="js/toaster/rand.js"></scr'+'ipt>')
+document.write('<scri'+'pt src="js/toaster/graph_view.js"></scr'+'ipt>')
 document.write('<scri'+'pt src="js/toaster/app.js"></scr'+'ipt>')
