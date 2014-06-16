@@ -54,6 +54,7 @@
         }).call(this),
         info: 'Stan początkowy'
       };
+      $('#test').html(initial_state.info);
       this.graph_states.push(initial_state);
       this.current_state = 0;
       return this.draw_graph();
@@ -219,8 +220,6 @@
     function App() {
       this.test_graph = __bind(this.test_graph, this);
 
-      this.dj = __bind(this.dj, this);
-
       this.process_nodes = __bind(this.process_nodes, this);
 
       this.dijkstra = __bind(this.dijkstra, this);
@@ -256,7 +255,6 @@
           var current;
           current = _this.q.delete_min();
           _this.graph_view.update(current, 'visited');
-          console.log('visited ', current.name);
           return _this.process_nodes(current);
         }), 1000);
       } else if (node) {
@@ -279,49 +277,6 @@
           }), 1000);
         }
       }
-    };
-
-    App.prototype.dj = function() {
-      var current, nbr_index, neighbour, new_distance, node, _results;
-      this.q = new Queue(this.g.nodes);
-      this.t = this.q.t;
-      this.g.nodes[1].distance = 0;
-      _results = [];
-      while (this.q.size > 0) {
-        current = this.q.delete_min();
-        console.log("" + current.name + " - " + current.distance);
-        console.log((function() {
-          var _i, _len, _ref, _results1;
-          _ref = this.q.nodes;
-          _results1 = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            node = _ref[_i];
-            _results1.push(node.distance);
-          }
-          return _results1;
-        }).call(this));
-        this.graph_view.update(current, 'visited');
-        _results.push((function() {
-          var _i, _len, _ref, _results1;
-          _ref = current.adj;
-          _results1 = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            neighbour = _ref[_i];
-            nbr_index = this.t[neighbour.node];
-            new_distance = current.distance + neighbour.dist;
-            console.log("dist ", new_distance);
-            if (new_distance < this.q.nodes[nbr_index].distance) {
-              this.q.nodes[nbr_index].distance = new_distance;
-              this.q.heapify(nbr_index);
-              _results1.push(this.graph_view.update(this.q.nodes[nbr_index], 'updated'));
-            } else {
-              _results1.push(void 0);
-            }
-          }
-          return _results1;
-        }).call(this));
-      }
-      return _results;
     };
 
     App.prototype.test_graph = function() {

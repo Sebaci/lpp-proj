@@ -126,13 +126,17 @@ class GraphView
     new_state.distances[node.num] = node.distance
     if mode == 'visited'
       new_state.colors[node.num] = @colors.green
+      new_state.info = "Odwiedzono #{node.name}"
     else if mode == 'updated'
       new_state.colors[node.num] = @colors.orange
+      new_state.info = "Zaktualizowano #{node.name}"
 
     @graph_states.push new_state
     @current_state++
 
     @draw_node node
+
+  restore_state
 
 class App
   constructor: ->
@@ -166,7 +170,7 @@ class App
         @graph_view.update current, 'visited'
 
         @process_nodes current
-      ), 1000
+      ), 700
 
     # update neighbours
     else if node
@@ -190,38 +194,8 @@ class App
           @q.heapify nbr_index
           @graph_view.update current, 'updated'
           @process_nodes node, i+1
-        ), 1000
+        ), 700
 
-
-
-  dj: =>
-    @q = new Queue(@g.nodes)
-    @t = @q.t
-
-    @g.nodes[1].distance = 0
-    while @q.size > 0
-      current = @q.delete_min()
-
-      console.log "#{current.name} - #{current.distance}"
-      console.log (node.distance for node in @q.nodes)
-
-      @graph_view.update current, 'visited'
-
-      for neighbour in current.adj
-        nbr_index = @t[neighbour.node]
-
-        new_distance = current.distance + neighbour.dist
-        console.log "dist ", new_distance
-
-        if new_distance < @q.nodes[nbr_index].distance
-          @q.nodes[nbr_index].distance = new_distance
-          @q.heapify nbr_index
-
-          @graph_view.update @q.nodes[nbr_index], 'updated'
-
-#    console.log '---'
-#    for i in [1..@g.size]
-#      console.log i, ': ', @q.nodes[@t[i]].distance
 
   test_graph: =>
     @g.add_node 'A'
