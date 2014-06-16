@@ -161,13 +161,12 @@ class App
     # mode to next mode
     if !node and @q.size > 0
       setTimeout (=>
-
         current = @q.delete_min()
 
         @graph_view.update current, 'visited'
 
         @process_nodes current
-      ), 500
+      ), 1000
 
     # update neighbours
     else if node
@@ -177,22 +176,21 @@ class App
 
       neighbour = node.adj[i]
       nbr_index = @t[neighbour.node]
+      current = @g.nodes[nbr_index]
 
       new_distance = node.distance + neighbour.dist
 
       # skip current neighbour if distance cannot be improved
-      if new_distance >= @q.nodes[nbr_index].distance
+      if new_distance >= current.distance
         @process_nodes node, i+1
 
       else
         setTimeout (=>
-          @q.nodes[nbr_index].distance = new_distance
+          current.distance = new_distance
           @q.heapify nbr_index
-
-          @graph_view.update @q.nodes[nbr_index], 'updated'
-
+          @graph_view.update current, 'updated'
           @process_nodes node, i+1
-        ), 500
+        ), 1000
 
 
 
@@ -213,6 +211,7 @@ class App
         nbr_index = @t[neighbour.node]
 
         new_distance = current.distance + neighbour.dist
+        console.log "dist ", new_distance
 
         if new_distance < @q.nodes[nbr_index].distance
           @q.nodes[nbr_index].distance = new_distance

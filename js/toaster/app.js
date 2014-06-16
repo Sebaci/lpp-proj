@@ -243,7 +243,7 @@
     };
 
     App.prototype.process_nodes = function(node, i) {
-      var nbr_index, neighbour, new_distance,
+      var current, nbr_index, neighbour, new_distance,
         _this = this;
       if (node == null) {
         node = null;
@@ -256,8 +256,9 @@
           var current;
           current = _this.q.delete_min();
           _this.graph_view.update(current, 'visited');
+          console.log('visited ', current.name);
           return _this.process_nodes(current);
-        }), 500);
+        }), 1000);
       } else if (node) {
         if (i >= node.adj.length) {
           this.process_nodes();
@@ -265,16 +266,17 @@
         }
         neighbour = node.adj[i];
         nbr_index = this.t[neighbour.node];
+        current = this.g.nodes[nbr_index];
         new_distance = node.distance + neighbour.dist;
-        if (new_distance >= this.q.nodes[nbr_index].distance) {
+        if (new_distance >= current.distance) {
           return this.process_nodes(node, i + 1);
         } else {
           return setTimeout((function() {
-            _this.q.nodes[nbr_index].distance = new_distance;
+            current.distance = new_distance;
             _this.q.heapify(nbr_index);
-            _this.graph_view.update(_this.q.nodes[nbr_index], 'updated');
+            _this.graph_view.update(current, 'updated');
             return _this.process_nodes(node, i + 1);
-          }), 500);
+          }), 1000);
         }
       }
     };
@@ -307,6 +309,7 @@
             neighbour = _ref[_i];
             nbr_index = this.t[neighbour.node];
             new_distance = current.distance + neighbour.dist;
+            console.log("dist ", new_distance);
             if (new_distance < this.q.nodes[nbr_index].distance) {
               this.q.nodes[nbr_index].distance = new_distance;
               this.q.heapify(nbr_index);
