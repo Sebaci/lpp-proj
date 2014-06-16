@@ -1,6 +1,56 @@
 (function() {
-  var App,
+  var App, QueueView,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  QueueView = (function() {
+
+    function QueueView(canvas) {
+      this.generate = __bind(this.generate, this);
+      this.canvas = document.getElementById(canvas).getContext('2d');
+      this.queue_states = [];
+      this.colors = {
+        red: '#ff5d40',
+        blue: '#4188D2'
+      };
+    }
+
+    QueueView.prototype.generate = function(graph) {
+      var coord;
+      this.nodes = graph.nodes;
+      this.size = this.nodes.length - 1;
+      this.generate_coords();
+      return console.log((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.coords;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          coord = _ref[_i];
+          _results.push(coord.x);
+        }
+        return _results;
+      }).call(this));
+    };
+
+    QueueView.prototype.generate_coords = function() {
+      this.coords = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+      return this.gen_coord(1, Math.ceil(this.coords.length / 2), 1);
+    };
+
+    QueueView.prototype.gen_coord = function(n, position, level) {
+      if (n >= this.coords.length) {
+        return;
+      }
+      this.coords[n] = {
+        x: position,
+        y: level
+      };
+      this.gen_coord(n * 2, position - Math.floor(this.coords.length / Math.pow(2, level + 1)), level + 1);
+      return this.gen_coord(n * 2 + 1, position + Math.floor(this.coords.length / Math.pow(2, level + 1)), level + 1);
+    };
+
+    return QueueView;
+
+  })();
 
   App = (function() {
 
@@ -13,19 +63,22 @@
 
       this.generate_graph = __bind(this.generate_graph, this);
       this.graph_view = new GraphView('graphCanvas');
+      this.queue_view = new QueueView('queueCanvas');
       this.states_list = new StatesList('statesList', this.graph_view);
     }
 
     App.prototype.generate_graph = function() {
       this.g = new Graph();
       this.test_graph();
-      return this.graph_view.generate(this.g);
+      this.graph_view.generate(this.g);
+      return this.queue_view.generate(this.g);
     };
 
     App.prototype.dijkstra = function() {
       this.q = new Queue(this.g.nodes);
       this.t = this.q.t;
       this.g.nodes[1].distance = 0;
+      this.graph_view.update(this.g.nodes, 'initial');
       this.states_list.update();
       return this.process_nodes();
     };

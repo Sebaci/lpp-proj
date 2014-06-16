@@ -1,6 +1,9 @@
 #graphCanvas{
-    /*width: 500px;*/
-    /*height: 250px;*/
+    border: 1px solid black;
+    float: left;
+}
+
+#queueCanvas{
     border: 1px solid black;
     float: left;
 }
@@ -10,6 +13,7 @@
     border: 1px solid black;
     float: left;
     margin-left: 10px;
+    margin-right: 10px;
 }
 #statesList{
     list-style-type: none;

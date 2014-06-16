@@ -14,16 +14,6 @@ class GraphView
     @size = @nodes.length - 1
 
     @generate_coords()
-    initial_state =
-      colors: (@colors.red for i in [0..@size])
-      distances: (node.distance for node in @nodes)
-      info: 'Stan początkowy'
-      type: 'initial'
-
-    @graph_states.push initial_state
-    @current_state = 0
-
-    @draw_graph()
 
   generate_coords: =>
     x_random = Rand.unique_random quantity: @size, min: 1, max: 15
@@ -118,6 +108,19 @@ class GraphView
     @canvas.fillText "d: #{node_dist}", coord.x - 14, coord.y + 24
 
   update: (node, mode) =>
+    if mode == 'initial'
+      initial_state =
+        colors: (@colors.red for i in [0..@size])
+        distances: (node.distance for node in @nodes)
+        info: 'Stan początkowy'
+        type: 'initial'
+
+      @graph_states.push initial_state
+      @current_state = 0
+
+      @draw_graph()
+      return
+
     current = @graph_states[@current_state]
     new_state =
       colors: _.clone current.colors

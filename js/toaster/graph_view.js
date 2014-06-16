@@ -31,35 +31,9 @@
     }
 
     GraphView.prototype.generate = function(graph) {
-      var i, initial_state, node;
       this.nodes = graph.nodes;
       this.size = this.nodes.length - 1;
-      this.generate_coords();
-      initial_state = {
-        colors: (function() {
-          var _i, _ref, _results;
-          _results = [];
-          for (i = _i = 0, _ref = this.size; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-            _results.push(this.colors.red);
-          }
-          return _results;
-        }).call(this),
-        distances: (function() {
-          var _i, _len, _ref, _results;
-          _ref = this.nodes;
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            node = _ref[_i];
-            _results.push(node.distance);
-          }
-          return _results;
-        }).call(this),
-        info: 'Stan początkowy',
-        type: 'initial'
-      };
-      this.graph_states.push(initial_state);
-      this.current_state = 0;
-      return this.draw_graph();
+      return this.generate_coords();
     };
 
     GraphView.prototype.generate_coords = function() {
@@ -200,7 +174,35 @@
     };
 
     GraphView.prototype.update = function(node, mode) {
-      var current, new_state;
+      var current, i, initial_state, new_state;
+      if (mode === 'initial') {
+        initial_state = {
+          colors: (function() {
+            var _i, _ref, _results;
+            _results = [];
+            for (i = _i = 0, _ref = this.size; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+              _results.push(this.colors.red);
+            }
+            return _results;
+          }).call(this),
+          distances: (function() {
+            var _i, _len, _ref, _results;
+            _ref = this.nodes;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              node = _ref[_i];
+              _results.push(node.distance);
+            }
+            return _results;
+          }).call(this),
+          info: 'Stan początkowy',
+          type: 'initial'
+        };
+        this.graph_states.push(initial_state);
+        this.current_state = 0;
+        this.draw_graph();
+        return;
+      }
       current = this.graph_states[this.current_state];
       new_state = {
         colors: _.clone(current.colors),
