@@ -42,7 +42,7 @@
       }
       this.coords[n] = {
         x: position * 30,
-        y: level * 30
+        y: level * 60
       };
       this.gen_coord(n * 2, position - Math.floor(this.coords.length / Math.pow(2, level + 1)), level + 1);
       return this.gen_coord(n * 2 + 1, position + Math.floor(this.coords.length / Math.pow(2, level + 1)), level + 1);
@@ -95,7 +95,7 @@
       this.canvas.font = 'bold 14px Georgia';
       this.canvas.fillText(name, coords.x - 8, coords.y);
       this.canvas.font = 'bold 12px Georgia';
-      return this.canvas.fillText('d: ' + distance, coords.x - 13, coords.y + 10);
+      return this.canvas.fillText('d:' + distance, coords.x - 13, coords.y + 10);
     };
 
     QueueView.prototype.update = function(mode) {

@@ -1,7 +1,7 @@
 class StatesList
   constructor: (@list_id, @graph_view, @queue_view) ->
     @list = $("##{@list_id}")
-    console.log @list
+
     @last_selected = null
     @last_color = null
 
@@ -22,19 +22,15 @@ class StatesList
     state.html graph_state.info
 
     state.click =>
-      console.log @last_color
-      console.log state_number
-      console.log @last_selected
-
       @graph_view.restore_state state_number
       @queue_view.restore_state state_number
+
       if @last_selected
         $("##{@list_id} li:nth-child(#{@last_selected+1})").css('background-color', @last_color)
       @last_selected = state_number
       @last_color = color
 
       state.css('background-color', @graph_view.colors.blue)
-
 
     @list.append state
 

@@ -20,7 +20,7 @@ class QueueView
     return if n >= @coords.length
     @coords[n] =
       x: position * 30
-      y: level * 30
+      y: level * 60
 
     @gen_coord n * 2, position - Math.floor(@coords.length / Math.pow(2, level + 1)), level + 1
     @gen_coord n * 2 + 1, position + Math.floor(@coords.length / Math.pow(2, level + 1)), level + 1
@@ -69,7 +69,7 @@ class QueueView
     @canvas.fillText name, coords.x - 8, coords.y
 
     @canvas.font = 'bold 12px Georgia'
-    @canvas.fillText 'd: ' + distance, coords.x - 13, coords.y + 10
+    @canvas.fillText 'd:' + distance, coords.x - 13, coords.y + 10
 
   update: (mode = 'modified') =>
     new_state =

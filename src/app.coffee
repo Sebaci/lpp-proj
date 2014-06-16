@@ -12,13 +12,43 @@ class App
 
     @states_list = new StatesList 'statesList', @graph_view, @queue_view
 
+    @letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P']
+
   generate_graph: =>
     @g = new Graph()
+    n = Rand.random min: 5, max: 12
+    m = Rand.random min: n-1, max: 2 * n
 
-    # should get n from input 5 <= n <= 15
+    edges = ([] for i in [0..n])
 
-    # should generate some nodes here
-    @test_graph()
+    edge_values = []
+    # generate at least one edge for each node
+    joining_order = Rand.unique_random quantity: n-1, min: 2, max: n
+
+    for i in joining_order
+      j = Rand.random min: 1, max: i - 1
+      edges[j].push i
+      edge_values.push Rand.random min: 1, max: 9
+
+    m = m - (n - 1)
+
+    while m > 0
+      i = Rand.random min: 1, max: n
+      j = Rand.random min: 1, max: n
+
+      if i == j or j in edges[i] or i in edges[j]
+        continue
+      edges[i].push j
+      edge_values.push Rand.random min: 1, max: 9
+      m--
+
+    for i in [1..n]
+      @g.add_node @letters[i - 1]
+
+    k = 0
+    for i in [1..n]
+      for j in  edges[i]
+        @g.add_edge i, j, edge_values[k++]
 
     @graph_view.generate @g
     @queue_view.generate @g
@@ -77,34 +107,8 @@ class App
           @process_nodes node, i+1
         ), 700
 
-
-  test_graph: =>
-    @g.add_node 'A'
-    @g.add_node 'B'
-    @g.add_node 'C'
-    @g.add_node 'D'
-    @g.add_node 'E'
-    @g.add_node 'F'
-
-    @g.add_edge 1, 2, 2
-    @g.add_edge 1, 6, 1
-    @g.add_edge 1, 5, 3
-    @g.add_edge 4, 1, 5
-    @g.add_edge 2, 6, 2
-    @g.add_edge 2, 3, 5
-    @g.add_edge 4, 3, 4
-    @g.add_edge 3, 5, 4
-    @g.add_edge 4, 5, 4
-    @g.add_edge 5, 6, 3
-
-
 $ ->
   app = new App()
 
   app.generate_graph()
   app.dijkstra()
-#  app.dj()
-#  foo = (opts) =>
-#    {one, two, three} = opts
-#    if one
-#      console.log 'one!'

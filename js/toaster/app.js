@@ -1,12 +1,11 @@
 (function() {
   var App,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   App = (function() {
 
     function App() {
-      this.test_graph = __bind(this.test_graph, this);
-
       this.process_nodes = __bind(this.process_nodes, this);
 
       this.dijkstra = __bind(this.dijkstra, this);
@@ -15,11 +14,77 @@
       this.graph_view = new GraphView('graphCanvas');
       this.queue_view = new QueueView('queueCanvas');
       this.states_list = new StatesList('statesList', this.graph_view, this.queue_view);
+      this.letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P'];
     }
 
     App.prototype.generate_graph = function() {
+      var edge_values, edges, i, j, joining_order, k, m, n, _i, _j, _k, _l, _len, _len1, _ref;
       this.g = new Graph();
-      this.test_graph();
+      n = Rand.random({
+        min: 5,
+        max: 12
+      });
+      m = Rand.random({
+        min: n - 1,
+        max: 2 * n
+      });
+      edges = (function() {
+        var _i, _results;
+        _results = [];
+        for (i = _i = 0; 0 <= n ? _i <= n : _i >= n; i = 0 <= n ? ++_i : --_i) {
+          _results.push([]);
+        }
+        return _results;
+      })();
+      edge_values = [];
+      joining_order = Rand.unique_random({
+        quantity: n - 1,
+        min: 2,
+        max: n
+      });
+      for (_i = 0, _len = joining_order.length; _i < _len; _i++) {
+        i = joining_order[_i];
+        j = Rand.random({
+          min: 1,
+          max: i - 1
+        });
+        edges[j].push(i);
+        edge_values.push(Rand.random({
+          min: 1,
+          max: 9
+        }));
+      }
+      m = m - (n - 1);
+      while (m > 0) {
+        i = Rand.random({
+          min: 1,
+          max: n
+        });
+        j = Rand.random({
+          min: 1,
+          max: n
+        });
+        if (i === j || __indexOf.call(edges[i], j) >= 0 || __indexOf.call(edges[j], i) >= 0) {
+          continue;
+        }
+        edges[i].push(j);
+        edge_values.push(Rand.random({
+          min: 1,
+          max: 9
+        }));
+        m--;
+      }
+      for (i = _j = 1; 1 <= n ? _j <= n : _j >= n; i = 1 <= n ? ++_j : --_j) {
+        this.g.add_node(this.letters[i - 1]);
+      }
+      k = 0;
+      for (i = _k = 1; 1 <= n ? _k <= n : _k >= n; i = 1 <= n ? ++_k : --_k) {
+        _ref = edges[i];
+        for (_l = 0, _len1 = _ref.length; _l < _len1; _l++) {
+          j = _ref[_l];
+          this.g.add_edge(i, j, edge_values[k++]);
+        }
+      }
       this.graph_view.generate(this.g);
       return this.queue_view.generate(this.g);
     };
@@ -74,25 +139,6 @@
           }), 700);
         }
       }
-    };
-
-    App.prototype.test_graph = function() {
-      this.g.add_node('A');
-      this.g.add_node('B');
-      this.g.add_node('C');
-      this.g.add_node('D');
-      this.g.add_node('E');
-      this.g.add_node('F');
-      this.g.add_edge(1, 2, 2);
-      this.g.add_edge(1, 6, 1);
-      this.g.add_edge(1, 5, 3);
-      this.g.add_edge(4, 1, 5);
-      this.g.add_edge(2, 6, 2);
-      this.g.add_edge(2, 3, 5);
-      this.g.add_edge(4, 3, 4);
-      this.g.add_edge(3, 5, 4);
-      this.g.add_edge(4, 5, 4);
-      return this.g.add_edge(5, 6, 3);
     };
 
     return App;
