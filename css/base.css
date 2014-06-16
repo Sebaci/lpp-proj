@@ -15,7 +15,6 @@
     margin-left: 5px;
     margin-right: 5px;
     padding: 0px;
-    /*height: 630px;*/
 }
 
 #control_area h3{
@@ -64,13 +63,10 @@
     padding: 0px;
     border: 1px solid black;
     margin-bottom: 5px;
-
 }
 
 #info h1{
     margin-left: 10px;
-    /*font-weight: bold;*/
-    /*font-size: 200%*/
     text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.65);
 }
 
