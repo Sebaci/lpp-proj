@@ -12,17 +12,15 @@
     width: 200px;
     border: 1px solid black;
     float: left;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
     padding: 0px;
-
-
+    height: 630px;
 }
 #statesList{
     list-style-type: none;
     padding: 0px;
     margin: 0px;
-
 }
 #statesList li{
     background-color: grey;
@@ -30,10 +28,34 @@
     margin: 0px;
     font-family: "Verdana", sans-serif;
     font-size: 12px;
-
-
 }
 
 #statesList li:hover{
     cursor: hand;
+}
+
+#left, #right{
+    margin: 0px;
+    padding: 0px;
+    float: left;
+    border: none;
+}
+
+#left{
+    width: 482px;
+}
+
+#right{
+    width: 574px;
+}
+
+#info{
+    width: 480px;
+    font-family: "Verdana", sans-serif;
+    float: left;
+    height: 143px;
+    padding: 0px;
+    border: 1px solid black;
+    margin-bottom: 5px;
+
 }

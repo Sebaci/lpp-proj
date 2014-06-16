@@ -8,7 +8,6 @@
       this.graph_view = graph_view;
       this.queue_view = queue_view;
       this.list = $("#" + this.list_id);
-      console.log(this.list);
       this.last_selected = null;
       this.last_color = null;
     }
@@ -23,9 +22,6 @@
       state.css('background-color', color);
       state.html(graph_state.info);
       state.click(function() {
-        console.log(_this.last_color);
-        console.log(state_number);
-        console.log(_this.last_selected);
         _this.graph_view.restore_state(state_number);
         _this.queue_view.restore_state(state_number);
         if (_this.last_selected) {
