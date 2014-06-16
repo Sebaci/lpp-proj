@@ -51,6 +51,8 @@
     QueueView.prototype.draw_queue = function() {
       var i, size, _i, _results;
       this.canvas.clearRect(0, 0, 480, 480);
+      this.canvas.font = "bold 14px Georgia";
+      this.canvas.fillText('Kolejka priorytetowa', 10, 15);
       size = this.queue_states[this.current_state].size;
       if (size < 1) {
         return;

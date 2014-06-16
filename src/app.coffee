@@ -6,13 +6,24 @@
 #<< states_list
 
 class App
-  constructor: ->
+  initialize_views: (graph_canvas, queue_canvas) =>
     @graph_view = new GraphView 'graphCanvas'
     @queue_view = new QueueView 'queueCanvas'
-
     @states_list = new StatesList 'statesList', @graph_view, @queue_view
 
+    @exec = false
+
+  constructor: ->
+    @initialize_views()
+
     @letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P']
+
+    @gen_btn = $('#generateGraph')
+    @gen_btn.click =>
+      @reset()
+      @generate_graph()
+
+      @gen_btn.prop 'disabled', true
 
   generate_graph: =>
     @g = new Graph()
@@ -53,6 +64,8 @@ class App
     @graph_view.generate @g
     @queue_view.generate @g
 
+    @dijkstra()
+
   dijkstra: =>
     @q = new Queue(@g.nodes)
     @t = @q.t
@@ -65,6 +78,9 @@ class App
     @process_nodes()
 
   process_nodes: (node = null, i = 0) =>
+    if !node and @q.size == 0
+      @gen_btn.prop 'disabled', false
+      return
 
     # mode to next mode
     if !node and @q.size > 0
@@ -75,9 +91,8 @@ class App
         @queue_view.update 'deleted'
         @states_list.update()
 
-
         @process_nodes current
-      ), 700
+      ), 300
 
     # update neighbours
     else if node
@@ -105,10 +120,14 @@ class App
           @states_list.update()
 
           @process_nodes node, i+1
-        ), 700
+        ), 300
+
+  reset: =>
+    @graph_canvas = @graph_view.canvas.clearRect(0, 0, 570, 630)
+    @queue_canvas = @queue_view.canvas.clearRect(0, 0, 480, 480)
+    @states_list.list.empty()
+    @initialize_views()
+
 
 $ ->
   app = new App()
-
-  app.generate_graph()
-  app.dijkstra()

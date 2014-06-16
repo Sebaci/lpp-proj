@@ -4,18 +4,30 @@
     <meta charset='utf-8'>
     <link rel="stylesheet" href="css/base.css" type="text/css" />
 
-    <script src="js/app-debug.js"></script>
+    <script src="js/app.js"></script>
 
 
 </head>
 <body>
 
 <div id="left">
-    <div id="info"></div>
+    <div id="info">
+        <h1 id="title">
+            Dijxter
+            <span id="ver">v.0.9</span>
+        </h1>
+
+        <h3 id="author">by Sebastian Cielemęcki</h3>
+        <h4 id="descr">Program demonstrujący działanie algorytmu Dijkstry</h4>
+    </div>
     <canvas id="queueCanvas" width="480" height="480"></canvas>
 </div>
 
 <div id="control_area">
+    <input type="submit" id="generateGraph" value = 'Generuj graf'/>
+    <!--<input type="submit" id="runDijkstra" value = 'Uruchom algorytm'/>-->
+
+    <h3>Kroki:</h3>
     <ul id="statesList"></ul>
 </div>
 

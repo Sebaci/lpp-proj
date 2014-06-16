@@ -5,16 +5,33 @@
 
   App = (function() {
 
+    App.prototype.initialize_views = function(graph_canvas, queue_canvas) {
+      this.graph_view = new GraphView('graphCanvas');
+      this.queue_view = new QueueView('queueCanvas');
+      this.states_list = new StatesList('statesList', this.graph_view, this.queue_view);
+      return this.exec = false;
+    };
+
     function App() {
+      this.reset = __bind(this.reset, this);
+
       this.process_nodes = __bind(this.process_nodes, this);
 
       this.dijkstra = __bind(this.dijkstra, this);
 
       this.generate_graph = __bind(this.generate_graph, this);
-      this.graph_view = new GraphView('graphCanvas');
-      this.queue_view = new QueueView('queueCanvas');
-      this.states_list = new StatesList('statesList', this.graph_view, this.queue_view);
+
+      this.initialize_views = __bind(this.initialize_views, this);
+
+      var _this = this;
+      this.initialize_views();
       this.letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P'];
+      this.gen_btn = $('#generateGraph');
+      this.gen_btn.click(function() {
+        _this.reset();
+        _this.generate_graph();
+        return _this.gen_btn.prop('disabled', true);
+      });
     }
 
     App.prototype.generate_graph = function() {
@@ -86,7 +103,8 @@
         }
       }
       this.graph_view.generate(this.g);
-      return this.queue_view.generate(this.g);
+      this.queue_view.generate(this.g);
+      return this.dijkstra();
     };
 
     App.prototype.dijkstra = function() {
@@ -108,6 +126,10 @@
       if (i == null) {
         i = 0;
       }
+      if (!node && this.q.size === 0) {
+        this.gen_btn.prop('disabled', false);
+        return;
+      }
       if (!node && this.q.size > 0) {
         return setTimeout((function() {
           var current;
@@ -116,7 +138,7 @@
           _this.queue_view.update('deleted');
           _this.states_list.update();
           return _this.process_nodes(current);
-        }), 700);
+        }), 300);
       } else if (node) {
         if (i >= node.adj.length) {
           this.process_nodes();
@@ -136,9 +158,16 @@
             _this.queue_view.update();
             _this.states_list.update();
             return _this.process_nodes(node, i + 1);
-          }), 700);
+          }), 300);
         }
       }
+    };
+
+    App.prototype.reset = function() {
+      this.graph_canvas = this.graph_view.canvas.clearRect(0, 0, 570, 630);
+      this.queue_canvas = this.queue_view.canvas.clearRect(0, 0, 480, 480);
+      this.states_list.list.empty();
+      return this.initialize_views();
     };
 
     return App;
@@ -147,9 +176,7 @@
 
   $(function() {
     var app;
-    app = new App();
-    app.generate_graph();
-    return app.dijkstra();
+    return app = new App();
   });
 
 }).call(this);

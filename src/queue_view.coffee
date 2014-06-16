@@ -1,6 +1,7 @@
 class QueueView
   constructor: (canvas) ->
     @canvas = document.getElementById(canvas).getContext('2d')
+
     @queue_states = []
 
     @colors =
@@ -27,6 +28,9 @@ class QueueView
 
   draw_queue: =>
     @canvas.clearRect(0, 0, 480, 480)
+    @canvas.font = "bold 14px Georgia"
+    @canvas.fillText 'Kolejka priorytetowa', 10, 15
+
     size = @queue_states[@current_state].size
     return if size < 1
 
