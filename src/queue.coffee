@@ -9,7 +9,7 @@ class Queue
     @swap 1, @size # move minimum behind queue
     @size--
     @heapify 1
-    @heapify @size+1, true
+#    @heapify @size+1, true
     return min
 
   heapify: (index, all=false) =>

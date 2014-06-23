@@ -24,6 +24,15 @@
     margin-left: 10px;
 }
 
+#listContainer{
+    margin: 0px;
+    padding: 0px;
+    height: 528px;
+    overflow-y: visible;
+    overflow-x: hidden;
+
+}
+
 #statesList{
     list-style-type: none;
     padding: 0px;
