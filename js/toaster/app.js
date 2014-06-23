@@ -68,7 +68,7 @@
         edges[j].push(i);
         edge_values.push(Rand.random({
           min: 1,
-          max: 9
+          max: 6
         }));
       }
       m = m - (n - 1);
@@ -138,7 +138,7 @@
           _this.queue_view.update('deleted');
           _this.states_list.update();
           return _this.process_nodes(current);
-        }), 300);
+        }), 450);
       } else if (node) {
         if (i >= node.adj.length) {
           this.process_nodes();
@@ -158,7 +158,7 @@
             _this.queue_view.update();
             _this.states_list.update();
             return _this.process_nodes(node, i + 1);
-          }), 300);
+          }), 450);
         }
       }
     };
