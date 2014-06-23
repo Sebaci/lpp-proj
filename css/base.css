@@ -1,3 +1,11 @@
+body{
+    background-color: #caf8b3;
+}
+
+div{
+    background-color: white;
+}
+
 #graphCanvas{
     border: 1px solid black;
     float: left;
@@ -7,6 +15,7 @@
     border: 1px solid black;
     float: left;
     color: #b5f891;
+    background-color: white;
 }
 
 #control_area{
@@ -59,10 +68,11 @@
 
 #left{
     width: 482px;
+    background-color: #caf8b3;
 }
 
 #right{
-    width: 574px;
+    width: 572px;
 }
 
 #info{
