@@ -32,7 +32,6 @@
       this.swap(1, this.size);
       this.size--;
       this.heapify(1);
-      this.heapify(this.size + 1, true);
       return min;
     };
 
