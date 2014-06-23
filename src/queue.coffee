@@ -9,13 +9,17 @@ class Queue
     @swap 1, @size # move minimum behind queue
     @size--
     @heapify 1
+    @heapify @size+1, true
     return min
 
-  heapify: (index) =>
+  heapify: (index, all=false) =>
     lesser_son = index * 2
 
-    while lesser_son <= @size
-      if lesser_son < @size and @nodes[lesser_son + 1].distance < @nodes[lesser_son].distance
+    size = if all then @nodes.length - 1
+    else @size
+
+    while lesser_son <= size
+      if lesser_son < size and @nodes[lesser_son + 1].distance < @nodes[lesser_son].distance
         lesser_son++
 
       if @nodes[index].distance > @nodes[lesser_son].distance

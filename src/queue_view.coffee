@@ -7,6 +7,7 @@ class QueueView
     @colors =
       red: '#ff5d40'
       orange: '#ffc040'
+      pale_green: '#caf8b3'
 
   generate: (graph) =>
     @nodes = graph.nodes
@@ -31,10 +32,7 @@ class QueueView
     @canvas.font = "bold 14px Georgia"
     @canvas.fillText 'Kolejka priorytetowa', 10, 15
 
-    size = @queue_states[@current_state].size
-    return if size < 1
-
-    for i in [1..size]
+    for i in [1..@nodes.length-1]
       @draw_node i
 
   draw_node: (i) =>
@@ -48,7 +46,7 @@ class QueueView
     # draw edges to children (if exist)
     children_pos = [i * 2, i * 2 + 1]
     for child_pos in children_pos
-      if child_pos <= size
+      if child_pos <= @nodes.length - 1
         child_coords = @coords[child_pos]
         @canvas.beginPath()
         @canvas.lineWidth = 2
@@ -58,7 +56,9 @@ class QueueView
         @canvas.stroke()
 
     # draw node itself
-    color = if @queue_states[@current_state].distances[i] == 2147483647
+    color = if i > size
+      @colors.pale_green
+    else if @queue_states[@current_state].distances[i] == 2147483647
       @colors.red
     else @colors.orange
     @canvas.beginPath()

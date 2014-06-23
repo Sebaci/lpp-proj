@@ -32,15 +32,20 @@
       this.swap(1, this.size);
       this.size--;
       this.heapify(1);
+      this.heapify(this.size + 1, true);
       return min;
     };
 
-    Queue.prototype.heapify = function(index) {
-      var lesser_son, _results;
+    Queue.prototype.heapify = function(index, all) {
+      var lesser_son, size, _results;
+      if (all == null) {
+        all = false;
+      }
       lesser_son = index * 2;
+      size = all ? this.nodes.length - 1 : this.size;
       _results = [];
-      while (lesser_son <= this.size) {
-        if (lesser_son < this.size && this.nodes[lesser_son + 1].distance < this.nodes[lesser_son].distance) {
+      while (lesser_son <= size) {
+        if (lesser_son < size && this.nodes[lesser_son + 1].distance < this.nodes[lesser_son].distance) {
           lesser_son++;
         }
         if (this.nodes[index].distance > this.nodes[lesser_son].distance) {

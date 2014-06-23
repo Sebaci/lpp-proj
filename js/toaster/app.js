@@ -68,7 +68,7 @@
         edges[j].push(i);
         edge_values.push(Rand.random({
           min: 1,
-          max: 6
+          max: 9
         }));
       }
       m = m - (n - 1);

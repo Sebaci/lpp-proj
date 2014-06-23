@@ -22,7 +22,8 @@
       this.queue_states = [];
       this.colors = {
         red: '#ff5d40',
-        orange: '#ffc040'
+        orange: '#ffc040',
+        pale_green: '#caf8b3'
       };
     }
 
@@ -49,16 +50,12 @@
     };
 
     QueueView.prototype.draw_queue = function() {
-      var i, size, _i, _results;
+      var i, _i, _ref, _results;
       this.canvas.clearRect(0, 0, 480, 480);
       this.canvas.font = "bold 14px Georgia";
       this.canvas.fillText('Kolejka priorytetowa', 10, 15);
-      size = this.queue_states[this.current_state].size;
-      if (size < 1) {
-        return;
-      }
       _results = [];
-      for (i = _i = 1; 1 <= size ? _i <= size : _i >= size; i = 1 <= size ? ++_i : --_i) {
+      for (i = _i = 1, _ref = this.nodes.length - 1; 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) {
         _results.push(this.draw_node(i));
       }
       return _results;
@@ -76,7 +73,7 @@
       children_pos = [i * 2, i * 2 + 1];
       for (_i = 0, _len = children_pos.length; _i < _len; _i++) {
         child_pos = children_pos[_i];
-        if (child_pos <= size) {
+        if (child_pos <= this.nodes.length - 1) {
           child_coords = this.coords[child_pos];
           this.canvas.beginPath();
           this.canvas.lineWidth = 2;
@@ -86,7 +83,7 @@
           this.canvas.stroke();
         }
       }
-      color = this.queue_states[this.current_state].distances[i] === 2147483647 ? this.colors.red : this.colors.orange;
+      color = i > size ? this.colors.pale_green : this.queue_states[this.current_state].distances[i] === 2147483647 ? this.colors.red : this.colors.orange;
       this.canvas.beginPath();
       this.canvas.lineWidth = 2;
       this.canvas.rect(coords.x - 14, coords.y - 14, 28, 28);

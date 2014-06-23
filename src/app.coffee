@@ -39,7 +39,7 @@ class App
     for i in joining_order
       j = Rand.random min: 1, max: i - 1
       edges[j].push i
-      edge_values.push Rand.random min: 1, max: 6
+      edge_values.push Rand.random min: 1, max: 9
 
     m = m - (n - 1)
 

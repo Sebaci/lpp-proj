@@ -6,6 +6,7 @@
 #queueCanvas{
     border: 1px solid black;
     float: left;
+    color: #b5f891;
 }
 
 #control_area{
@@ -89,7 +90,7 @@
     background-color: rgba(0, 21, 255, 0.64);
     border: 0px;
     outline: 0px;
-    width: 150px;
+    width: 180px;
     height: 35px;
     margin: 5%;
     font-weight: bold;
